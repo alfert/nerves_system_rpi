@@ -50,3 +50,29 @@ Add nerves_system_rpi0 to your list of dependencies in mix.exs:
 def deps do [{:"nerves_system_rpi0", github: "tmecklem/nerves_system_rpi0", tag: "v0.11.1", runtime: false}] end
 
 [Image credit](#fritzing): This image is from the [Fritzing](http://fritzing.org/home/) parts library.
+
+
+## Bluetooth Support
+
+Preparation: Comment out all entries from the `checksum` entry within `nerves.exs`
+to prevent that after a change of the mentioned files a new docker container
+is constructed!
+
+### Linux Kernel configuration
+Inside the docker container, run `make linux-menuconfig` and do the following:
+* enable BT subsystem (as module)
+* enable BT HCI UART drivers and the BROADCOM Protocol support (also enables UART H4 support)
+* enable BT HCI USB driver support
+
+Save the generated config-file with `make linux-savedefconfig` and copy it from
+`build/linux-....` to `/nerves/env/nerves_system_rpi0/linux-4.4.defconfig` to store
+in the git directory on the host.
+
+### Buildroot configuration
+Run `make menuconfig` and configure
+* `bluez-utils 5.x`
+* `OBIX`, `CLI`, `GATT` and experimental plugins
+
+Save the generated config file with `make savedefconfig`.
+
+Leave the docker container and run `mix` from the host directory.
