@@ -73,6 +73,17 @@ Run `make menuconfig` and configure
 * `bluez-utils 5.x`
 * `OBIX`, `CLI`, `GATT` and experimental plugins
 
-Save the generated config file with `make savedefconfig`.
+### Patching bluez5_utils
+For supporting the bcm43xx chip, we need:
+* the firmware file `BCM43430A1.hcd`, put into `/lib/firmware`
+* we need to apply the patch `https://gist.github.com/pelwell/c8230c48ea24698527cd`
+  to patch `hciattach.c` to properly load the firmware into the chip. This patch
+  also seeks the firmware-file in `/lib/firmware` instead of `/etc/firmware`.
+The patch files are stored in `patches/bluez5_utils`. Configure in `make menuconfig`
+the global patches directory to `/nerves/env/nerves_system_rpi0/patches`.
 
-Leave the docker container and run `mix` from the host directory.
+Now store the generated buildroot configuration with `make savedefconfig`, leave docker
+and run `mix` to create the system.
+
+### TODO:
+* Create a solid Bluetooth userland configuration. 
